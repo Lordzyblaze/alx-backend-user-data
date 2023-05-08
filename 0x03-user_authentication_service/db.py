@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """DB module
 """
 from sqlalchemy import create_engine
@@ -29,3 +28,38 @@ class DB:
             DBSession = sessionmaker(bind=self._engine)
             self.__session = DBSession()
         return self.__session
+
+    def find_user_by(self, **kwargs) -> User:
+        """ implementing the DB.find_user_by method.
+            Return: First row found in the users table as filtered by kwargs
+        """
+        if not kwargs:
+        raise InvalidRequestError
+        
+        column_names = User.__table__.columns.keys()
+        for key in kwargs.keys():
+            if key not in column_names:
+                raise InvalidRequestError
+
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if user is None:
+            raise NoResultFound
+        return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """ implementing the DB.update_user method that
+            Returns: None
+        """
+        user = self.find_user_by(id=user_id)
+
+        column_names = User.__table__.columns.keys()
+        for key in kwargs.keys():
+            if key not in column_names:
+                raise ValueError
+
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+
+        self._session.commit()
+
+
