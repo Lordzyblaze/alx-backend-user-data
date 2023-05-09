@@ -34,10 +34,9 @@ def login():
     """ /sessions POST endpoint. """
     email = request.form['email']
     passw = request.form['password']
-
     if not AUTH.valid_login(email, passw):
         abort(401)
-
+    
     session_id = AUTH.create_session(email)
     resp = make_response({"email": email, "message": "logged in"})
     resp.set_cookie("session_id", session_id)
@@ -68,10 +67,11 @@ def get_reset_password_token():
     """ /reset_password POST endpoint. """
     email = request.form['email']
     try:
-       token = AUTH.get_reset_password_token(email)
-       return jsonify({"email": email, "reset_token": token}), 200
+        token = AUTH.get_reset_password_token(email)
+        return jsonify({"email": email, "reset_token": token}), 200
     except ValueError:
         abort(403)
+
 
 @app.route('/reset_password', methods=['PUT'])
 def update_password():
@@ -84,7 +84,6 @@ def update_password():
         return jsonify({"email": email, "message": "Password updated"}), 200
     except ValueError:
         abort(403)
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
