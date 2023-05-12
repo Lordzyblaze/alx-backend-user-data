@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """ Auth module. """
-from typing import Union
+
+
 from db import DB
+from bcrypt import hashpw, gensalt, checkpw
+from sqlalchemy.orm.exc import NoResultFound
 from user import User
-import bcrypt
+from tying import Union
 import uuid
 
 
